@@ -26,6 +26,7 @@ No celular, usando um gerenciador de arquivos, navegue até onde você salvou o 
 Depois de aceitar e realizar a instalação, o app estará funcional.
 
 Mais informações sobre instalação de .apk pode ser encontrada [aqui](https://www.nextpit.com/android-for-beginners-what-is-an-apk-file "aqui").
+
 <br>
 
 ## 👨‍💻 Desenvolvido utilizando
