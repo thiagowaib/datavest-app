@@ -1,0 +1,28 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "datavest-app",
+            "program": "lib/login.dart",
+            "request": "launch",
+            "type": "dart"
+        },
+        {
+            "name": "datavest-app (profile mode)",
+            "program": "lib/login.dart",
+            "request": "launch",
+            "type": "dart",
+            "flutterMode": "profile"
+        },
+        {
+            "name": "datavest-app (release mode)",
+            "program": "lib/login.dart",
+            "request": "launch",
+            "type": "dart",
+            "flutterMode": "release"
+        }
+    ]
+}
