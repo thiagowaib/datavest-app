@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:datavest/cadastro.dart';
 import 'package:datavest/datas.dart';
+import 'package:datavest/preferencias.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:json_annotation/json_annotation.dart';
@@ -45,7 +46,8 @@ class MyApp extends StatelessWidget {
       routes: {
         '/': (context) => const LoginPage(),
         '/cadastro': (context) => const CadastroPage(),
-        '/datas': (context) => const DatasPage()
+        '/datas': (context) => const DatasPage(),
+        '/preferencias': (context) => const PreferenciasPage()
       },
     );
   }
@@ -75,6 +77,13 @@ class _LoginPageState extends State<LoginPage> {
   FormData formData = FormData();
   // String jwt = '';
 
+  // Controla o show/hide do campo de senha
+  bool hidePwd = true;
+  void toggleHidePwd(){
+    setState(() {
+      hidePwd = !hidePwd;
+    });
+  }
 
 
   @override
@@ -111,8 +120,10 @@ class _LoginPageState extends State<LoginPage> {
                       keyboardType: TextInputType.emailAddress,
                       onChanged: (value) => formData.email = value,
                       controller: emailController,
+                      maxLength: 50,
                       decoration: const InputDecoration(
-                        hintText: "Email"
+                        hintText: "Email",
+                        counterText: "",
                       ),
                       validator: (String? value) {
                         if(value == null || value.isEmpty) {
@@ -124,20 +135,35 @@ class _LoginPageState extends State<LoginPage> {
                   ),
                   Padding(
                     padding: const EdgeInsets.symmetric(vertical: 16.0, horizontal: 20.0),
-                    child: TextFormField(
-                      keyboardType: TextInputType.text,
-                      obscureText: true,
-                      onChanged: (value) => formData.senha = value,
-                      controller: senhaController,
-                      decoration: const InputDecoration(
-                        hintText: "Senha"
-                      ),
-                      validator: (String? value) {
-                        if(value == null || value.isEmpty) {
-                          return 'Campo obrigatório';
-                        }
-                        return null;
-                      },
+                    child: Row(
+                      children: [
+                        Expanded(
+                          child: TextFormField(
+                            keyboardType: TextInputType.text,
+                            obscureText: hidePwd,
+                            onChanged: (value) => formData.senha = value,
+                            controller: senhaController,
+                            maxLength: 16,
+                            decoration: const InputDecoration(
+                              hintText: "Senha",
+                              counterText: "",
+                            ),
+                            validator: (String? value) {
+                              if(value == null || value.isEmpty) {
+                                return 'Campo obrigatório';
+                              }
+                              return null;
+                            },
+                          ),
+                        ),
+                        SizedBox(
+                        width: 30,
+                        child: TextButton(
+                          onPressed: toggleHidePwd,
+                          child: (hidePwd ? const Icon(Icons.visibility_off, color: Colors.grey) : const Icon(Icons.visibility, color: Colors.grey)),
+                        ),
+                      )
+                      ],
                     ),
                   ),
                   Padding(
@@ -154,7 +180,7 @@ class _LoginPageState extends State<LoginPage> {
                           if(formKey.currentState!.validate()){
                             // Use a JSON encoded string to send
                             var result = await httpClient.post(
-                                Uri.parse('https://datavest-servidor.glitch.me/login'),
+                                Uri.parse('https://datavest-api.glitch.me/login'),
                                 body: json.encode(formData.toJson()),
                                 headers: {'content-type': 'application/json'});
                             
@@ -163,19 +189,19 @@ class _LoginPageState extends State<LoginPage> {
                             if(result.statusCode==202) {
                               // jwt = response['tokenAcesso'];
                               Fluttertoast.showToast(
-                                msg: "Login feito com sucesso!",
+                                msg: response['message'].toString(),
                                 toastLength: Toast.LENGTH_SHORT,
                                 gravity: ToastGravity.TOP_RIGHT,
                                 timeInSecForIosWeb: 1,
                                 backgroundColor: Colors.green,
                                 textColor: Colors.white,
-                                fontSize: 16.0
+                                fontSize: 16.0,
                               );
                               // ignore: use_build_context_synchronously
                               Navigator.pushReplacementNamed(context, "/datas");
                             } else {
                               Fluttertoast.showToast(
-                                msg: "Login inválido",
+                                msg: response['message'].toString(),
                                 toastLength: Toast.LENGTH_LONG,
                                 gravity: ToastGravity.TOP_RIGHT,
                                 timeInSecForIosWeb: 1,

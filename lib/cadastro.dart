@@ -37,6 +37,22 @@ class _CadastroPageState extends State<CadastroPage> {
   TextEditingController senhaController = TextEditingController();
   TextEditingController emailController = TextEditingController();
 
+  // Controla o show/hide dos campos de senha
+  bool hidePwd     = true;
+  bool hidePwdConf = true;
+
+  void toggleHidePwd(){
+    setState(() {
+      hidePwd = !hidePwd;
+    });
+  }
+
+  void toggleHidePwdConf(){
+    setState(() {
+      hidePwdConf = !hidePwdConf;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
 
@@ -65,11 +81,12 @@ class _CadastroPageState extends State<CadastroPage> {
                     )
                   ),
                   Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 16.0, horizontal: 20.0),
+                    padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 20),
                     child: TextFormField(
                       keyboardType: TextInputType.emailAddress,
                       controller: emailController,
                       onChanged: (value) => formData.email = value,
+                      maxLength: 50,
                       decoration: const InputDecoration(
                         hintText: "Email"
                       ),
@@ -77,23 +94,8 @@ class _CadastroPageState extends State<CadastroPage> {
                         if(value == null || value.isEmpty) {
                           return 'Campo obrigatório';
                         }
-                        return null;
-                      },
-                    ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 16.0, horizontal: 20.0),
-                    child: TextFormField(
-                      obscureText: true,
-                      keyboardType: TextInputType.text,
-                      controller: senhaController,
-                      onChanged: (value) => formData.senha = value,
-                      decoration: const InputDecoration(
-                        hintText: "Senha"
-                      ),
-                      validator: (String? value) {
-                        if(value == null || value.isEmpty) {
-                          return 'Campo obrigatório';
+                        if(!RegExp(r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+").hasMatch(value)) {
+                          return 'Email inválido';
                         }
                         return null;
                       },
@@ -101,22 +103,70 @@ class _CadastroPageState extends State<CadastroPage> {
                   ),
                   Padding(
                     padding: const EdgeInsets.symmetric(vertical: 16.0, horizontal: 20.0),
-                    child: TextFormField(
-                      keyboardType: TextInputType.text,
-                      controller: senhaConfController,
-                      obscureText: true,
-                      decoration: const InputDecoration(
-                        hintText: "Confirmar Senha"
+                    child: Row(
+                      children: [
+                      Expanded(
+                        child: TextFormField(
+                          obscureText: hidePwd,
+                          keyboardType: TextInputType.text,
+                          controller: senhaController,
+                          onChanged: (value) => formData.senha = value,
+                          maxLength: 16,
+                          decoration: const InputDecoration(
+                            hintText: "Senha"
+                          ),
+                          validator: (String? value) {
+                            if(value == null || value.isEmpty) {
+                              return 'Campo obrigatório';
+                            }
+                            if(value.length <= 3) {
+                              return 'A senha deve ter mais de 3 caracteres';
+                            }
+                            return null;
+                          },
+                        ),
                       ),
-                      validator: (String? value) {
-                        if(value == null || value.isEmpty) {
-                          return 'Campo obrigatório';
-                        }
-                        if(value != formData.senha) {
-                          return 'As senhas devem ser iguais!';
-                        }
-                        return null;
-                      },
+                      SizedBox(
+                        width: 30,
+                        child: TextButton(
+                          onPressed: toggleHidePwd,
+                          child: (hidePwd ? const Icon(Icons.visibility_off, color: Colors.grey) : const Icon(Icons.visibility, color: Colors.grey)),
+                        ),
+                      )
+                    ],)
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 16.0, horizontal: 20.0),
+                    child: Row(
+                      children: [
+                        Expanded(
+                          child: TextFormField(
+                            keyboardType: TextInputType.text,
+                            controller: senhaConfController,
+                            obscureText: hidePwdConf,
+                            maxLength: 16,
+                            decoration: const InputDecoration(
+                              hintText: "Confirmar Senha"
+                            ),
+                            validator: (String? value) {
+                              if(value == null || value.isEmpty) {
+                                return 'Campo obrigatório';
+                              }
+                              if(value != formData.senha) {
+                                return 'As senhas devem ser iguais!';
+                              }
+                              return null;
+                            },
+                          ),
+                        ),
+                        SizedBox(
+                          width: 30,
+                          child: TextButton(
+                            onPressed: toggleHidePwdConf,
+                            child: (hidePwdConf ? const Icon(Icons.visibility_off, color: Colors.grey) : const Icon(Icons.visibility, color: Colors.grey)),
+                          ),
+                        )
+                      ],
                     ),
                   ),
                   Padding(
@@ -133,7 +183,7 @@ class _CadastroPageState extends State<CadastroPage> {
                           if(formKey.currentState!.validate()){
                             // Use a JSON encoded string to send
                             var result = await httpClient.post(
-                                Uri.parse('https://datavest-servidor.glitch.me/cadastrarUsuario'),
+                                Uri.parse('https://datavest-api.glitch.me/cadastrarUsuario'),
                                 body: json.encode(formData.toJson()),
                                 headers: {'content-type': 'application/json'});
             

@@ -6,12 +6,13 @@ part of 'datas.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
-FormData _$FormDataFromJson(Map<String, dynamic> json) => FormData(
-      email: json['email'] as String?,
-      senha: json['senha'] as String?,
+Vestibular _$VestibularFromJson(Map<String, dynamic> json) => Vestibular(
+      descricao: json['descricao'] as String,
+      data: json['data'] as String,
     );
 
-Map<String, dynamic> _$FormDataToJson(FormData instance) => <String, dynamic>{
-      'email': instance.email,
-      'senha': instance.senha,
+Map<String, dynamic> _$VestibularToJson(Vestibular instance) =>
+    <String, dynamic>{
+      'descricao': instance.descricao,
+      'data': instance.data,
     };
