@@ -6,12 +6,15 @@ part of 'preferencias.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
-FormData _$FormDataFromJson(Map<String, dynamic> json) => FormData(
-      email: json['email'] as String?,
-      senha: json['senha'] as String?,
+Preferencia _$PreferenciaFromJson(Map<String, dynamic> json) => Preferencia(
+      id: json['id'] as String,
+      descricao: json['descricao'] as String,
+      prefere: json['prefere'] as bool,
     );
 
-Map<String, dynamic> _$FormDataToJson(FormData instance) => <String, dynamic>{
-      'email': instance.email,
-      'senha': instance.senha,
+Map<String, dynamic> _$PreferenciaToJson(Preferencia instance) =>
+    <String, dynamic>{
+      'id': instance.id,
+      'descricao': instance.descricao,
+      'prefere': instance.prefere,
     };

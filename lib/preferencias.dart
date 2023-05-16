@@ -4,23 +4,25 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:json_annotation/json_annotation.dart';
 import 'package:http/http.dart' as http;
-import 'package:fluttertoast/fluttertoast.dart';
 
 part 'preferencias.g.dart';
 @JsonSerializable()
-class FormData {
-  String? email;
-  String? senha;
+class Preferencia{
+  String id;
+  String descricao;
+  bool prefere;
 
-  FormData({
-    this.email,
-    this.senha,
+  Preferencia({
+    required this.id,
+    required this.descricao,
+    required this.prefere
   });
 
-  factory FormData.fromJson(Map<String, dynamic> json) =>
-      _$FormDataFromJson(json);
-
-  Map<String, dynamic> toJson() => _$FormDataToJson(this);
+  static Preferencia fromJson(json) => Preferencia(
+    id: json['id'],
+    descricao: json['descricao'],
+    prefere: json['prefere']
+  );
 }
 
 class PreferenciasPage extends StatefulWidget {
@@ -33,15 +35,61 @@ class PreferenciasPage extends StatefulWidget {
 class _PreferenciasPageState extends State<PreferenciasPage> {
   GlobalKey<FormState> formKey = GlobalKey<FormState>();
 
+  Future<List<Preferencia>> preferenciasFuture = getPreferencias();
+
+  static Future<List<Preferencia>> getPreferencias() async {
+    final response = await http.post(
+      Uri.parse('https://datavest-api.glitch.me/buscarPreferencias'),
+      body: json.encode({'email': 'teste@email.com'}),
+      headers: {'content-type': 'application/json'}
+    );
+
+    final body = json.decode(response.body);
+
+    return body.map<Preferencia>(Preferencia.fromJson).toList();
+  }
+
   @override
   Widget build(BuildContext context) {
-    FormData formData = FormData();
-
     // Media Queries that fetch current screen width and height
     double screenWidth   = MediaQuery.of(context).size.width;
     // double screenHeight  = MediaQuery.of(context).size.height;
 
-    var httpClient = http.Client();
+    List<String> preferenciasUsuario = [];
+
+    Widget buildPreferencias(List<Preferencia> preferencias) => ListView.builder(
+      itemCount: preferencias.length,
+      scrollDirection: Axis.vertical,
+      shrinkWrap: true,
+      itemBuilder: ((context, index) {
+        final preferencia = preferencias[index];
+
+        if(preferencia.prefere) {
+          preferenciasUsuario.add(preferencia.id);
+        }
+        // TODO: Arrumar um jeito de configurar os switches para habilitar/desabilitar cada um dos cards dinâmicamente alocados
+        return Card(
+          child: ListTile(
+            title: Text(preferencia.descricao),
+            trailing: Switch(
+              value: preferencia.prefere,
+              activeTrackColor: Colors.green.shade400,
+              activeColor: Colors.green.shade700,
+              inactiveTrackColor: Colors.grey.shade400,
+              inactiveThumbColor: Colors.grey.shade700,
+              onChanged: (value) {
+                preferencia.prefere = !preferencia.prefere;
+                if(preferenciasUsuario.contains(preferencia.id)) {
+                  preferenciasUsuario.remove(preferencia.id);
+                } else {
+                  preferenciasUsuario.add(preferencia.id);
+                }
+              },
+            ),
+          ),
+        );
+      }),
+    );
 
 
     return Scaffold(
@@ -72,6 +120,29 @@ class _PreferenciasPageState extends State<PreferenciasPage> {
                       ),
                     )
                   ]),
+              ),
+              Expanded(
+                child: SingleChildScrollView(
+                  physics: const BouncingScrollPhysics(),
+                  child: Column(
+                    children: <Widget>[
+                      FutureBuilder<List<Preferencia>>(
+                        future: preferenciasFuture,
+                        builder: (context, snapshot) {
+                          if(snapshot.connectionState == ConnectionState.waiting) {
+                            return const CircularProgressIndicator();
+                          } else if (snapshot.hasData) {
+                            final preferencias = snapshot.data!;
+
+                            return buildPreferencias(preferencias);
+                          } else {
+                            return const Center(child: Text("Não há vestibulares no sistema"));
+                          }
+                        },
+                      ),
+                    ],
+                  ),
+                )
               ),
               Padding(
                 padding: const EdgeInsets.symmetric(vertical: 20.0, horizontal: 0),
