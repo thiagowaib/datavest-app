@@ -8,6 +8,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:json_annotation/json_annotation.dart';
 import 'package:http/http.dart' as http;
 import 'package:fluttertoast/fluttertoast.dart';
+import 'globals.dart' as globals;
 
 part 'login.g.dart';
 void main() {
@@ -28,6 +29,23 @@ class FormData {
       _$FormDataFromJson(json);
 
   Map<String, dynamic> toJson() => _$FormDataToJson(this);
+}
+class Preferencia{
+  String id;
+  String descricao;
+  bool prefere;
+
+  Preferencia({
+    required this.id,
+    required this.descricao,
+    required this.prefere
+  });
+
+  static Preferencia fromJson(json) => Preferencia(
+    id: json['id'],
+    descricao: json['descricao'],
+    prefere: json['prefere']
+  );
 }
 
 class MyApp extends StatelessWidget {
@@ -85,13 +103,21 @@ class _LoginPageState extends State<LoginPage> {
     });
   }
 
+  @override
+  void initState(){
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+      if(globals.jwt != ''){
+        Navigator.pushReplacementNamed(context, "/datas");
+      }
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
 
     double screenWidth   = MediaQuery.of(context).size.width;
     var httpClient = http.Client();
-
 
     return Scaffold(
       body: SafeArea(
@@ -187,7 +213,6 @@ class _LoginPageState extends State<LoginPage> {
                             var response = json.decode(result.body);
 
                             if(result.statusCode==202) {
-                              // jwt = response['tokenAcesso'];
                               Fluttertoast.showToast(
                                 msg: response['message'].toString(),
                                 toastLength: Toast.LENGTH_SHORT,
@@ -197,6 +222,24 @@ class _LoginPageState extends State<LoginPage> {
                                 textColor: Colors.white,
                                 fontSize: 16.0,
                               );
+                              globals.email = formData.email.toString();
+                              globals.jwt = response['tokenAcesso'];
+
+                              result = await httpClient.post(
+                                Uri.parse('https://datavest-api.glitch.me/buscarPreferencias'),
+                                body: json.encode({'email': formData.email.toString()}),
+                                headers: {'content-type': 'application/json'});
+                            
+                              response = json.decode(result.body);
+                              var preferencias = (response.map<Preferencia>(Preferencia.fromJson).toList());
+                              List<String> preferenciasUsuario = [];
+                              for (var i = 0; i < preferencias.length; i++) {
+                                var preferencia = preferencias[i];
+                                if(preferencia.prefere){
+                                  preferenciasUsuario.add(preferencia.id);
+                                }
+                              }
+                              globals.preferencias = preferenciasUsuario;
                               // ignore: use_build_context_synchronously
                               Navigator.pushReplacementNamed(context, "/datas");
                             } else {

@@ -4,8 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:json_annotation/json_annotation.dart';
 import 'package:http/http.dart' as http;
+import 'globals.dart' as globals;
 
-part 'datas.g.dart';
 @JsonSerializable()
 class Vestibular {
   String descricao;
@@ -33,11 +33,11 @@ class _DatasPageState extends State<DatasPage> {
   GlobalKey<FormState> formKey = GlobalKey<FormState>();
 
   Future<List<Vestibular>> vestibularesFuture = getVestibulares();
-
+  
   static Future<List<Vestibular>> getVestibulares() async {
     final response = await http.post(
       Uri.parse('https://datavest-api.glitch.me/listarDatas'),
-      body: json.encode({'vestibulares': []}),
+      body: json.encode({'vestibulares': globals.preferencias}),
       headers: {'content-type': 'application/json'}
     );
 
@@ -76,6 +76,7 @@ class _DatasPageState extends State<DatasPage> {
             ),
           );
         }
+        return null;
       }),
     );
 
@@ -98,6 +99,9 @@ class _DatasPageState extends State<DatasPage> {
                     ),
                     GestureDetector(
                       onTap: () {
+                        globals.email = '';
+                        globals.jwt = '';
+                        globals.preferencias = [];
                         Navigator.pushReplacementNamed(context, "/");
                       },
                       child: SvgPicture.asset(
