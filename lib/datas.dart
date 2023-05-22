@@ -53,6 +53,7 @@ class _DatasPageState extends State<DatasPage> {
     double screenWidth   = MediaQuery.of(context).size.width;
     // double screenHeight  = MediaQuery.of(context).size.height;
 
+
     Widget buildVestibulares(List<Vestibular> vestibulares) => ListView.builder(
       itemCount: vestibulares.length,
       scrollDirection: Axis.vertical,
@@ -64,7 +65,7 @@ class _DatasPageState extends State<DatasPage> {
         final dataVest = DateTime.parse('${data.split('/')[2]}-${data.split('/')[1]}-${data.split('/')[0]}');
 
         final diasRestantes = (dataVest.difference(dataHoje).inHours / 24).round();
-        
+
         if(diasRestantes > 0) {
           return Card(
             child: ListTile(
@@ -117,7 +118,13 @@ class _DatasPageState extends State<DatasPage> {
                   physics: const BouncingScrollPhysics(),
                   child: Column(
                     children: [
-                      FutureBuilder<List<Vestibular>>(
+                      ((globals.preferencias.length == 1 && globals.preferencias[0] == '.') ?
+                        const Center(child: Text("""
+
+
+Não há vestibulares para exibir, 
+  verifique suas preferências.""", style: TextStyle(color: Colors.grey),))
+                      : FutureBuilder<List<Vestibular>>(
                         future: vestibularesFuture,
                         builder: (context, snapshot) {
                           if(snapshot.connectionState == ConnectionState.waiting) {
@@ -130,7 +137,7 @@ class _DatasPageState extends State<DatasPage> {
                             return const Center(child: Text("Não há vestibulares para acessar"));
                           }
                         },
-                      ),
+                      )),
                     ],
                   ),
                 ),

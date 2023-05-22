@@ -216,7 +216,7 @@ class _LoginPageState extends State<LoginPage> {
                               Fluttertoast.showToast(
                                 msg: response['message'].toString(),
                                 toastLength: Toast.LENGTH_SHORT,
-                                gravity: ToastGravity.TOP_RIGHT,
+                                gravity: ToastGravity.TOP,
                                 timeInSecForIosWeb: 1,
                                 backgroundColor: Colors.green,
                                 textColor: Colors.white,
@@ -232,7 +232,7 @@ class _LoginPageState extends State<LoginPage> {
                             
                               response = json.decode(result.body);
                               var preferencias = (response.map<Preferencia>(Preferencia.fromJson).toList());
-                              List<String> preferenciasUsuario = [];
+                              List<String> preferenciasUsuario = ["."];
                               for (var i = 0; i < preferencias.length; i++) {
                                 var preferencia = preferencias[i];
                                 if(preferencia.prefere){
@@ -246,7 +246,7 @@ class _LoginPageState extends State<LoginPage> {
                               Fluttertoast.showToast(
                                 msg: response['message'].toString(),
                                 toastLength: Toast.LENGTH_LONG,
-                                gravity: ToastGravity.TOP_RIGHT,
+                                gravity: ToastGravity.TOP,
                                 timeInSecForIosWeb: 1,
                                 backgroundColor: Colors.red,
                                 textColor: Colors.white,

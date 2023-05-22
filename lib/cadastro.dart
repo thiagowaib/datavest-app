@@ -192,7 +192,7 @@ class _CadastroPageState extends State<CadastroPage> {
                               Fluttertoast.showToast(
                                 msg: "Cadastro feito com sucesso!",
                                 toastLength: Toast.LENGTH_SHORT,
-                                gravity: ToastGravity.TOP_RIGHT,
+                                gravity: ToastGravity.TOP,
                                 timeInSecForIosWeb: 1,
                                 backgroundColor: Colors.green,
                                 textColor: Colors.white,
@@ -204,7 +204,7 @@ class _CadastroPageState extends State<CadastroPage> {
                               Fluttertoast.showToast(
                                 msg: "Houve um problema",
                                 toastLength: Toast.LENGTH_LONG,
-                                gravity: ToastGravity.TOP_RIGHT,
+                                gravity: ToastGravity.TOP,
                                 timeInSecForIosWeb: 1,
                                 backgroundColor: Colors.red,
                                 textColor: Colors.white,

@@ -1,3 +1,3 @@
-List<String> preferencias = [];
+List<String> preferencias = ['.'];
 String email = '';
 String jwt = '';

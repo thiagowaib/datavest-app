@@ -63,11 +63,11 @@ class _PreferenciasPageState extends State<PreferenciasPage> {
 
     final body = json.decode(response.body);
 
-    if(response.statusCode==201) {
+    if(response.statusCode==200) {
       Fluttertoast.showToast(
         msg: body['message'].toString(),
         toastLength: Toast.LENGTH_SHORT,
-        gravity: ToastGravity.TOP_RIGHT,
+        gravity: ToastGravity.TOP,
         timeInSecForIosWeb: 1,
         backgroundColor: Colors.green,
         textColor: Colors.white,
@@ -77,7 +77,7 @@ class _PreferenciasPageState extends State<PreferenciasPage> {
     Fluttertoast.showToast(
       msg: body['message'].toString(),
       toastLength: Toast.LENGTH_LONG,
-      gravity: ToastGravity.TOP_RIGHT,
+      gravity: ToastGravity.TOP,
       timeInSecForIosWeb: 1,
       backgroundColor: Colors.red,
       textColor: Colors.white,
@@ -86,21 +86,13 @@ class _PreferenciasPageState extends State<PreferenciasPage> {
     }
   }
 
-  filtrarVestibulares(){
-    setState(() {
-      filtrando = !filtrando;
-    });
-    if(!filtrando) {
-      filtrarController.clear();
-    }
-  }
   @override
   Widget build(BuildContext context) {
     // Media Queries that fetch current screen width and height
     double screenWidth   = MediaQuery.of(context).size.width;
     // double screenHeight  = MediaQuery.of(context).size.height;
 
-    List<String> preferenciasUsuario = [];
+    List<String> preferenciasUsuario = ["."];
 
     Widget buildPreferencias(List<Preferencia> preferencias) => ListView.builder(
       itemCount: preferencias.length,
@@ -211,9 +203,15 @@ class _PreferenciasPageState extends State<PreferenciasPage> {
                         keyboardType: TextInputType.text,
                         controller: filtrarController,
                         onChanged: (value) {
-                          setState(() {
-                            filtrando = false;
-                          });
+                          if(value.length >= 3) {
+                            setState(() {
+                              filtrando = true;
+                            });
+                          } else {
+                            setState(() {
+                              filtrando = false;
+                            });
+                          }
                         },
                         maxLength: 16,
                         decoration: const InputDecoration(
@@ -232,9 +230,14 @@ class _PreferenciasPageState extends State<PreferenciasPage> {
                     width: 30,
                     child: TextButton(
                       onPressed: (){
-                        filtrarVestibulares();
+                        if(filtrarController.text != "") {
+                          filtrarController.clear();
+                          setState(() {
+                            filtrando = false;
+                          });
+                        }
                       },
-                      child: (!filtrando ? const Icon(Icons.search, color: Colors.grey) : const Icon(Icons.close, color: Colors.grey)),
+                      child: (filtrarController.text == "" ? const Icon(Icons.search, color: Colors.grey) : const Icon(Icons.close, color: Colors.grey)),
                     ),
                   )
                   ],
