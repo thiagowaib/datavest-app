@@ -43,7 +43,7 @@ class _PreferenciasPageState extends State<PreferenciasPage> {
   static Future<List<Preferencia>> getPreferencias() async {
     final response = await http.post(
       Uri.parse('https://datavest-api.glitch.me/buscarPreferencias'),
-      body: json.encode({'email': 'teste@email.com'}),
+      body: json.encode({'email': globals.email}),
       headers: {'content-type': 'application/json'}
     );
 

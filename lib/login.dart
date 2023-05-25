@@ -2,7 +2,9 @@ import 'dart:convert';
 
 import 'package:datavest/cadastro.dart';
 import 'package:datavest/datas.dart';
+import 'package:datavest/conv_datas.dart';
 import 'package:datavest/preferencias.dart';
+import 'package:datavest/conv_preferencias.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:json_annotation/json_annotation.dart';
@@ -65,7 +67,9 @@ class MyApp extends StatelessWidget {
         '/': (context) => const LoginPage(),
         '/cadastro': (context) => const CadastroPage(),
         '/datas': (context) => const DatasPage(),
-        '/preferencias': (context) => const PreferenciasPage()
+        '/conv_datas': (context) => const ConvDatasPage(),
+        '/preferencias': (context) => const PreferenciasPage(),
+        '/conv_preferencias': (context) => const ConvPreferenciasPage()
       },
     );
   }
@@ -278,6 +282,34 @@ class _LoginPageState extends State<LoginPage> {
                         ),),
                       )
                     ],
+                  ),
+                  const Padding(
+                    padding: EdgeInsets.symmetric(vertical: 35, horizontal: 20),
+                    child: Text("―――――――――――  ou  ―――――――――――", style: TextStyle(
+                          color: Colors.grey, 
+                          fontSize: 12,
+                          fontWeight: FontWeight.w200,
+                          fontStyle: FontStyle.italic
+                        ),),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 20),
+                    child: GestureDetector(
+                      onTap: () {
+                          emailController.clear();
+                          senhaController.clear();
+                          globals.email = '';
+                          globals.jwt = '';
+                          globals.preferencias = [];
+                          Navigator.pushNamed(context, "/conv_datas", arguments: "1");
+                      },
+                      child: const Text("Entrar como Convidado", style: TextStyle(
+                          color: Colors.orange, 
+                          fontSize: 16,
+                          fontWeight: FontWeight.w700,
+                          decoration: TextDecoration.underline
+                      ),),
+                    ),
                   )
                 ],
               ),
