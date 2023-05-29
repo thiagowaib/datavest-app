@@ -143,7 +143,11 @@ Não há vestibulares para exibir,
                 
                             return buildVestibulares(vestibulares);
                           } else {
-                            return const Center(child: Text("Não há vestibulares para acessar"));
+                            return const Center(child: Text("""
+
+
+              Não há vestibulares para exibir, 
+verifique sua conexão de rede ou preferências."""));
                           }
                         },
                       )),

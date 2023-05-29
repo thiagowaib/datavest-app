@@ -261,10 +261,14 @@ class _PreferenciasPageState extends State<PreferenciasPage> {
                                     return const CircularProgressIndicator();
                                   } else if (snapshot.hasData) {
                                     final preferencias = snapshot.data!;
-
                                     return buildPreferencias(preferencias);
                                   } else {
-                                    return const Center(child: Text("Não há vestibulares no sistema"));
+                                    return const Center(child: Text("""
+
+
+Não há vestibulares para exibir, 
+ verifique sua conexão de rede 
+  ou tente de novo mais tarde."""));
                                   }
                                 },
                               ),

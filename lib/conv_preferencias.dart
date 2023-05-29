@@ -1,29 +1,7 @@
-import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:json_annotation/json_annotation.dart';
-import 'package:http/http.dart' as http;
 import 'globals.dart' as globals;
-
-@JsonSerializable()
-class Preferencia{
-  String id;
-  String descricao;
-  bool prefere;
-
-  Preferencia({
-    required this.id,
-    required this.descricao,
-    required this.prefere
-  });
-
-  static Preferencia fromJson(json) => Preferencia(
-    id: json['id'],
-    descricao: json['descricao'],
-    prefere: json['prefere']
-  );
-}
 
 class ConvPreferenciasPage extends StatefulWidget {
   const ConvPreferenciasPage({super.key});
@@ -35,21 +13,8 @@ class ConvPreferenciasPage extends StatefulWidget {
 class _ConvPreferenciasPageState extends State<ConvPreferenciasPage> {
   GlobalKey<FormState> formKey = GlobalKey<FormState>();
 
-  Future<List<Preferencia>> preferenciasFuture = getPreferencias();
   TextEditingController filtrarController = TextEditingController();
   bool filtrando = false;
-
-  static Future<List<Preferencia>> getPreferencias() async {
-    final response = await http.post(
-      Uri.parse('https://datavest-api.glitch.me/buscarPreferencias'),
-      body: json.encode({'email': 'teste@email.com'}),
-      headers: {'content-type': 'application/json'}
-    );
-
-    final body = json.decode(response.body);
-
-    return body.map<Preferencia>(Preferencia.fromJson).toList();
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -143,7 +108,7 @@ Não é possível personalizar suas preferências
                           children: <Widget>[
                             GestureDetector(
                               onTap: () {
-                                Navigator.pushReplacementNamed(context, '/datas');
+                                Navigator.pushReplacementNamed(context, '/conv_datas');
                               },
                               child: Row(
                                 mainAxisAlignment: MainAxisAlignment.start,
